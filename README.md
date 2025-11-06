@@ -33,29 +33,125 @@ Abre `http://localhost:3000` en el navegador.
 - `npm start`: arranca la app compilada.
 - `npm run lint`: ejecuta ESLint.
 
-### Estructura del proyecto (¿para qué sirve cada archivo?)
+### Estructura del proyecto
 
-**Configuración**
-- `next.config.ts`: configuración de Next.js (features, bundling, etc.).
-- `eslint.config.mjs`: reglas de linting del proyecto.
-- `postcss.config.mjs`: configuración de PostCSS/Tailwind.
-- `tsconfig.json`: configuración de TypeScript.
-- `.env`: variables de entorno (Supabase URL y keys). **No lo subas al repo**.
-- `.gitignore`: ignora archivos que no deben versionarse.
+```
+Ecommers/
+├── .env                          # Variables de entorno (Supabase keys) - NO SUBIR AL REPO
+├── .gitignore                    # Archivos y carpetas ignorados por Git
+├── eslint.config.mjs             # Configuración de ESLint (reglas de linting)
+├── next.config.ts                # Configuración de Next.js (features, bundling)
+├── next-env.d.ts                 # Tipos de Next.js (generado automáticamente)
+├── package.json                  # Dependencias y scripts del proyecto
+├── package-lock.json             # Versiones exactas de dependencias
+├── postcss.config.mjs            # Configuración de PostCSS/Tailwind
+├── tsconfig.json                 # Configuración de TypeScript
+│
+├── public/                        # Recursos estáticos (accesibles en /ruta)
+│   ├── favicon.ico               # Icono de la pestaña del navegador
+│   ├── next.svg                  # Logo de Next.js (puedes eliminar)
+│   ├── vercel.svg                # Logo de Vercel (puedes eliminar)
+│   └── ...                       # Otros archivos estáticos (imágenes, etc.)
+│
+├── prisma/                        # Configuración de Prisma (NO USADO - puedes eliminar)
+│   ├── schema.prisma             # Schema de Prisma (no necesario con Supabase)
+│   ├── seed.cjs                  # Script de seeding (no necesario con Supabase)
+│   └── migrations/               # Migraciones de Prisma (no necesario)
+│
+└── src/                          # Código fuente de la aplicación
+    │
+    ├── app/                      # App Router de Next.js (rutas y páginas)
+    │   │
+    │   ├── layout.tsx             # Layout raíz (HTML base, metadata, fuentes)
+    │   ├── page.tsx               # Página principal (/) - Listado de productos
+    │   ├── globals.css            # Estilos globales y configuración de Tailwind
+    │   ├── favicon.ico            # Icono de la app
+    │   │
+    │   ├── api/                   # API Routes (endpoints REST)
+    │   │   └── products/
+    │   │       ├── route.ts       # GET /api/products (listar) y POST /api/products (crear)
+    │   │       └── [id]/
+    │   │           └── route.ts   # GET/PUT/DELETE /api/products/[id] (operaciones por ID)
+    │   │
+    │   └── productos/             # Páginas de productos
+    │       └── [id]/
+    │           └── page.tsx       # Página de detalle de producto (/productos/[id])
+    │
+    ├── lib/                       # Utilidades y configuraciones compartidas
+    │   └── supabase/
+    │       ├── client.ts          # Cliente de Supabase para navegador (Client Components)
+    │       └── server.ts          # Cliente de Supabase para servidor (Server Components, API Routes)
+    │
+    └── types/                     # Tipos TypeScript
+        └── supabase.ts            # Tipos generados para las tablas de Supabase
+```
 
-**Frontend**
-- `src/app/layout.tsx`: layout raíz de la app (HTML base, fuentes, providers).
-- `src/app/globals.css`: estilos globales y Tailwind.
-- `src/app/page.tsx`: página de inicio; punto de partida del catálogo.
-- `public/…`: recursos estáticos (imágenes, SVGs, favicon, etc.).
+### Descripción detallada de archivos y carpetas
 
-**Backend (API Routes)**
-- `src/app/api/products/route.ts`: endpoints para listar y crear productos (GET, POST).
-- `src/app/api/products/[id]/route.ts`: endpoints para un producto específico (GET, PUT, DELETE).
+#### **Raíz del proyecto**
 
-**Supabase (Base de datos)**
-- `src/lib/supabase/client.ts`: cliente de Supabase para usar en componentes del navegador.
-- `src/lib/supabase/server.ts`: cliente de Supabase para usar en el servidor (API routes, server components).
+- **`.env`**: Variables de entorno (Supabase URL y keys). **IMPORTANTE**: No subir al repositorio.
+- **`.gitignore`**: Define qué archivos/carpetas Git debe ignorar (node_modules, .env, .next, etc.).
+- **`package.json`**: Lista de dependencias y scripts npm (`dev`, `build`, `start`, etc.).
+- **`tsconfig.json`**: Configuración de TypeScript (paths, strict mode, etc.).
+- **`next.config.ts`**: Configuración de Next.js (experimental features, webpack, etc.).
+- **`eslint.config.mjs`**: Reglas de linting para mantener código consistente.
+- **`postcss.config.mjs`**: Configuración de PostCSS y Tailwind CSS.
+
+#### **`public/`** - Recursos estáticos
+
+Archivos accesibles directamente desde la URL (ej: `/next.svg`). Aquí van:
+- Imágenes, iconos, SVGs
+- Favicon
+- Archivos PDF, documentos, etc.
+
+#### **`src/app/`** - App Router de Next.js
+
+Cada carpeta/archivo aquí define una ruta en tu aplicación:
+
+- **`layout.tsx`**: Layout raíz que envuelve todas las páginas. Define el `<html>`, `<body>`, metadata global, fuentes.
+- **`page.tsx`**: Página principal en `/` - Muestra el listado de productos.
+- **`globals.css`**: Estilos globales, variables CSS, configuración de Tailwind.
+- **`api/`**: API Routes - Endpoints REST que puedes llamar desde el frontend o externamente.
+  - `api/products/route.ts`: Maneja GET (listar) y POST (crear) productos.
+  - `api/products/[id]/route.ts`: Maneja GET (obtener), PUT (actualizar) y DELETE (eliminar) un producto específico.
+- **`productos/[id]/page.tsx`**: Página dinámica para mostrar el detalle de un producto. La ruta es `/productos/[id]` donde `[id]` es el ID del producto.
+
+#### **`src/lib/`** - Utilidades y configuraciones
+
+Código reutilizable y configuraciones:
+
+- **`lib/supabase/client.ts`**: Cliente de Supabase para usar en **Client Components** (componentes que se ejecutan en el navegador). Usa `'use client'`.
+- **`lib/supabase/server.ts`**: Cliente de Supabase para usar en **Server Components** y **API Routes** (código que se ejecuta en el servidor).
+
+#### **`src/types/`** - Tipos TypeScript
+
+- **`types/supabase.ts`**: Tipos TypeScript generados para las tablas de Supabase. Te da autocompletado y type safety al trabajar con la base de datos.
+
+#### **`prisma/`** - (Opcional - puedes eliminar)
+
+Carpeta de Prisma que ya no se usa porque estamos usando Supabase directamente. Puedes eliminar esta carpeta si quieres.
+
+### Guía rápida para hacer cambios
+
+**Para agregar una nueva página:**
+- Crea una carpeta en `src/app/` con el nombre de la ruta (ej: `src/app/carrito/page.tsx` → `/carrito`)
+- Crea un archivo `page.tsx` dentro de esa carpeta
+
+**Para agregar un nuevo endpoint API:**
+- Crea una carpeta en `src/app/api/` con el nombre del recurso (ej: `src/app/api/cart/route.ts` → `/api/cart`)
+- Crea un archivo `route.ts` con las funciones `GET`, `POST`, `PUT`, `DELETE`, etc.
+
+**Para agregar componentes reutilizables:**
+- Crea una carpeta `src/components/` y agrega tus componentes ahí
+- Importa desde `@/components/nombre-componente`
+
+**Para agregar utilidades:**
+- Crea archivos en `src/lib/` (ej: `src/lib/utils.ts`, `src/lib/format.ts`)
+
+**Para usar Supabase:**
+- En Server Components o API Routes: `import { supabase } from '@/lib/supabase/server'`
+- En Client Components: `import { supabase } from '@/lib/supabase/client'` (y agrega `'use client'` al inicio del archivo)
 
 ### Base de datos (Supabase)
 

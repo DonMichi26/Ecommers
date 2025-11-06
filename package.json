@@ -6,15 +6,9 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint",
-    "seed": "node prisma/seed.cjs",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev --name update",
-    "prisma:studio": "prisma studio",
-    "db:reset": "rimraf prisma/dev.db && prisma migrate reset --force && npm run seed"
+    "lint": "eslint"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.0",
     "@supabase/supabase-js": "^2.80.0",
     "next": "16.0.1",
     "react": "19.2.0",
@@ -28,7 +22,6 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
-    "prisma": "^6.19.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
