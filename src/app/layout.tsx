@@ -1,34 +1,45 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Poppins } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans", 
-  subsets: ["latin"],           
+const playfairDisplay = Playfair_Display({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  display: "optional",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono", 
-  subsets: ["latin"],             
+const poppins = Poppins({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "optional",
 });
 
 export const metadata: Metadata = {
-  title: "Mi Tienda - E-commerce",  
-  description: "Tu tienda online con Next.js y Supabase", 
+  title: "Furni. - Tienda de Muebles Modernos",
+  description: "Muebles atemporales, entregados en tu puerta.",
 };
 
 export default function RootLayout({
-  children, 
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="es" className="light" suppressHydrationWarning>
+      <head>
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional"
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${playfairDisplay.variable} ${poppins.variable} antialiased bg-background-light dark:bg-background-dark font-body text-charcoal dark:text-off-white`}
         suppressHydrationWarning
       >
-        {/* Renderiza el contenido específico de cada página */}
         {children}
       </body>
     </html>

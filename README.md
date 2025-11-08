@@ -53,11 +53,6 @@ Ecommers/
 │   ├── vercel.svg                # Logo de Vercel (puedes eliminar)
 │   └── ...                       # Otros archivos estáticos (imágenes, etc.)
 │
-├── prisma/                        # Configuración de Prisma (NO USADO - puedes eliminar)
-│   ├── schema.prisma             # Schema de Prisma (no necesario con Supabase)
-│   ├── seed.cjs                  # Script de seeding (no necesario con Supabase)
-│   └── migrations/               # Migraciones de Prisma (no necesario)
-│
 └── src/                          # Código fuente de la aplicación
     │
     ├── app/                      # App Router de Next.js (rutas y páginas)
