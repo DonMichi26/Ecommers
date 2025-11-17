@@ -1,6 +1,41 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { getCurrentUser, signOut } from '@/lib/supabase/auth'
+import { useRouter } from 'next/navigation'
 
 export default function Header() {
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const currentUser = await getCurrentUser()
+        setUser(currentUser)
+      } catch (error) {
+        console.error('Error getting user:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      setUser(null)
+      router.push('/')
+      router.refresh()
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-solid border-charcoal/10 dark:border-off-white/10">
       <div className="mx-auto flex max-w-7xl items-center justify-between whitespace-nowrap px-4 sm:px-6 lg:px-8 py-3">
@@ -12,25 +47,31 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-9">
             <Link
               className="text-charcoal dark:text-off-white text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-              href="#"
+              href="/catalogo"
+            >
+              Catálogo
+            </Link>
+            <Link
+              className="text-charcoal dark:text-off-white text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+              href="/#"
             >
               Salón
             </Link>
             <Link
               className="text-charcoal dark:text-off-white text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-              href="#"
+              href="/#"
             >
               Dormitorio
             </Link>
             <Link
               className="text-charcoal dark:text-off-white text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-              href="#"
+              href="/#"
             >
               Comedor
             </Link>
             <Link
               className="text-charcoal dark:text-off-white text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-              href="#"
+              href="/#"
             >
               Oficina
             </Link>
@@ -50,21 +91,33 @@ export default function Header() {
             </div>
           </label>
           <div className="flex gap-2">
-            <button
-              className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-transparent text-charcoal dark:text-off-white hover:bg-charcoal/5 dark:hover:bg-off-white/5 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
-              aria-label="Perfil"
-            >
-              <span className="material-symbols-outlined">person</span>
-            </button>
-            <button
+            {user ? (
+              <Link
+                className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-transparent text-charcoal dark:text-off-white hover:bg-charcoal/5 dark:hover:bg-off-white/5 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+                href="/perfil"
+                aria-label="Perfil"
+              >
+                <span className="material-symbols-outlined">person</span>
+              </Link>
+            ) : (
+              <Link
+                className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-transparent text-charcoal dark:text-off-white hover:bg-charcoal/5 dark:hover:bg-off-white/5 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+                href="/auth"
+                aria-label="Iniciar sesión"
+              >
+                <span className="material-symbols-outlined">person</span>
+              </Link>
+            )}
+            <Link
               className="relative flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-transparent text-charcoal dark:text-off-white hover:bg-charcoal/5 dark:hover:bg-off-white/5 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+              href="/carrito"
               aria-label="Carrito de compras"
             >
               <span className="material-symbols-outlined">shopping_bag</span>
-              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-sienna text-xs font-bold text-white">
+              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
                 2
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

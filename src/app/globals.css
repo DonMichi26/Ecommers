@@ -3,13 +3,25 @@
 
 /* Configuración de Tailwind v4 - Variables CSS personalizadas */
 :root {
-  /* Colores personalizados de Furni - Tailwind v4 detecta automáticamente --color-* */
-  --color-primary: #5f8575;
-  --color-background-light: #f5f5f3;
-  --color-background-dark: #101d22;
-  --color-charcoal: #333333;
-  --color-off-white: #f5f5f3;
-  --color-sienna: #a0522d;
+  /* Nueva paleta de colores neutra (blanco, negro, beige y tonos intermedios) */
+  --color-primary: #333333; /* Carácter principal (negro/gris oscuro) */
+  --color-background-light: #f5f5f3; /* Fondo claro (beige suave) */
+  --color-background-dark: #121212;   /* Fondo oscuro (negro puro o muy oscuro) */
+  --color-charcoal: #333333;          /* Texto principal */
+  --color-off-white: #f5f5f3;         /* Blanco "beige" */
+  --color-sienna: #a0522d;            /* <-- Puedes eliminar esta línea si no la usas más */
+
+  /* Colores neutros adicionales para mayor versatilidad */
+  --color-neutral-50: #fafafa;        /* Blanco muy suave */
+  --color-neutral-100: #f5f5f5;       /* Blanco suave */
+  --color-neutral-200: #e5e5e5;       /* Gris muy claro */
+  --color-neutral-300: #d4d4d4;       /* Gris claro */
+  --color-neutral-400: #a3a3a3;       /* Gris intermedio */
+  --color-neutral-500: #737373;       /* Gris medio */
+  --color-neutral-600: #525252;       /* Gris oscuro */
+  --color-neutral-700: #404040;       /* Gris muy oscuro */
+  --color-neutral-800: #262626;       /* Casi negro */
+  --color-neutral-900: #171717;       /* Negro muy oscuro */
 
   /* Fuentes personalizadas */
   --font-display: var(--font-display);
@@ -32,4 +44,45 @@
 /* Aplica estilos generales al cuerpo del documento */
 body {
   font-family: var(--font-body);
+  /* Aplica colores neutros por defecto */
+  background-color: var(--color-background-light);
+  color: var(--color-charcoal);
+}
+/* Modo oscuro para el body */
+body.dark {
+  background-color: var(--color-background-dark);
+  color: var(--color-off-white);
+}
+
+/* Globales reutilizables para textos (modo claro y oscuro) - Adaptados a la nueva paleta */
+.text-title {
+  color: var(--color-charcoal); /* Negro/gris oscuro */
+}
+/* Modo oscuro para textos de título */
+body.dark .text-title {
+  color: var(--color-off-white); /* Blanco/beige */
+}
+
+.text-subtitle {
+  color: var(--color-neutral-500); /* Gris medio */
+}
+/* Modo oscuro para subtítulos */
+body.dark .text-subtitle {
+  color: var(--color-neutral-400); /* Gris claro en modo oscuro */
+}
+
+.text-secondary {
+  color: var(--color-neutral-600); /* Gris oscuro */
+}
+/* Modo oscuro para texto secundario */
+body.dark .text-secondary {
+  color: var(--color-neutral-300); /* Gris claro en modo oscuro */
+}
+
+.text-footer {
+  color: var(--color-neutral-600); /* Igual que texto secundario */
+}
+/* Modo oscuro para texto de pie de página */
+body.dark .text-footer {
+  color: var(--color-neutral-300); /* Igual que texto secundario en modo oscuro */
 }

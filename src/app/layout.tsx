@@ -7,14 +7,12 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
-  display: "optional",
 });
 
 const poppins = Poppins({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  display: "optional",
 });
 
 export const metadata: Metadata = {
@@ -30,10 +28,9 @@ export default function RootLayout({
   return (
     <html lang="es" className="light" suppressHydrationWarning>
       <head>
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
         />
       </head>
       <body

@@ -64,9 +64,9 @@ export default async function Home() {
                 </div>
                 <Link
                   className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-semibold leading-normal hover:bg-primary/90 transition-colors"
-                  href="#productos"
+                  href="/furniture-collection"
                 >
-                  <span className="truncate">Ver Catálogo</span>
+                  <span className="truncate">Ver Categorías</span>
                 </Link>
               </div>
             </div>
@@ -164,7 +164,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key_aqui`}
                             href={`/productos/${product.id}`}
                             className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-off-white dark:bg-white/10 text-charcoal dark:text-off-white text-sm font-semibold leading-normal hover:bg-charcoal/10 dark:hover:bg-white/20 transition-colors"
                           >
-                            <span className="truncate">Añadir al carrito</span>
+                            <span className="truncate">Ver producto</span>
                           </Link>
                         </div>
                       </div>
