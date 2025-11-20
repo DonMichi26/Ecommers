@@ -1,121 +1,165 @@
-import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
+// --- Configuración y creación del cliente Supabase ---
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// Obtención de variables de entorno necesarias para conectar con Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+// Si faltan las variables de entorno, lanzamos un error
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+  throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Cliente Supabase listo para usarse en el resto del proyecto
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Función para obtener usuario actual
+// ---------------------- Funciones de Autenticación y Perfil ----------------------
+
+// Obtiene el usuario actual mediante una llamada a la API local
 export async function getCurrentUser() {
-  const cookieStore = cookies()
-  const token = cookieStore.get('sb-access-token')?.value
-  
-  if (!token) return null
-
-  const { data: { user }, error } = await supabase.auth.getUser(token)
-  
-  if (error) {
-    console.error('Error getting current user:', error)
-    return null
-  }
-  
-  return user
-}
-
-// Función para registro de usuario
-export async function signUp(email: string, password: string, name: string) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name: name
-      }
-    }
-  })
-
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  // Enviar email de bienvenida
   try {
-    await fetch('/api/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        type: 'welcome',
+    const response = await fetch('/api/auth/me'); // Solicita la info del usuario actual
+    if (!response.ok) {
+      if (response.status === 401) {
+        return null; // No hay usuario autenticado
+      }
+      throw new Error('Error getting current user');
+    }
+
+    const { user } = await response.json();
+    return user;
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
+}
+
+// Registra un nuevo usuario (email, contraseña y nombre)
+// Envía también un email de bienvenida usando la API interna
+export async function signUp(email: string, password: string, name: string) {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
         data: {
-          email,
-          name
+          name: name
         }
-      })
-    })
-  } catch (emailError) {
-    console.error('Error al enviar email de bienvenida:', emailError)
-    // No lanzamos error porque el registro fue exitoso
-  }
+      }
+    });
 
-  return data
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Intento de enviar un email de bienvenida (opcional, no detiene el registro)
+    try {
+      await fetch('/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'welcome',
+          data: {
+            email,
+            name
+          }
+        })
+      });
+    } catch (emailError) {
+      console.error('Error al enviar email de bienvenida:', emailError);
+      // No lanzamos error porque el registro fue exitoso
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Sign up error:', error);
+    throw error;
+  }
 }
 
-// Función para inicio de sesión
+// Inicia sesión con correo y contraseña
 export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    throw new Error(error.message)
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Sign in error:', error);
+    throw error;
   }
-
-  return data
 }
 
-// Función para cierre de sesión
+// Cierra la sesión del usuario
+// Realiza signOut en supabase y también limpia la sesión del servidor
 export async function signOut() {
-  const { error } = await supabase.auth.signOut()
-  
-  if (error) {
-    throw new Error(error.message)
+  try {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Llama la API para limpiar sesión en el servidor también
+    try {
+      await fetch('/api/auth/signout', {
+        method: 'POST',
+      });
+    } catch (apiError) {
+      console.error('Error calling signout API:', apiError);
+    }
+
+    return { message: 'Signed out successfully' };
+  } catch (error) {
+    console.error('Sign out error:', error);
+    throw error;
   }
 }
 
-// Función para actualizar perfil de usuario
-export async function updateUserProfile(userId: string, updates: any) {
+// Definición del tipo de datos que se pueden actualizar en el perfil de usuario
+export interface UserProfileUpdate {
+  name?: string
+  phone?: string
+  address?: string
+  city?: string
+  postal_code?: string
+}
+
+// Actualiza información del perfil de usuario en la tabla "profiles"
+export async function updateUserProfile(userId: string, updates: Partial<UserProfileUpdate>) {
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
     .eq('id', userId)
     .select()
-    .single()
+    .single(); // Devuelve solo el perfil actualizado
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
 
-  return data
+  return data;
 }
 
-// Función para obtener perfil de usuario
+// Obtiene el perfil de usuario desde la tabla "profiles" mediante ID
 export async function getUserProfile(userId: string) {
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', userId)
-    .single()
+    .single(); // Devuelve solo el perfil encontrado
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
 
-  return data
+  return data;
 }
